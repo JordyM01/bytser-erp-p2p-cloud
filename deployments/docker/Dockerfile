@@ -13,6 +13,7 @@ FROM alpine:3.19
 RUN apk --no-cache add ca-certificates \
     && addgroup -g 1000 -S app && adduser -u 1000 -S app -G app
 COPY --from=builder /erp-p2p-cloud /usr/local/bin/erp-p2p-cloud
+COPY --from=builder /src/config/ /config/
 USER app
 EXPOSE 4001/tcp 4001/udp 8080 9090
 ENTRYPOINT ["erp-p2p-cloud"]
