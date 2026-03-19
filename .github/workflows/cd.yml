@@ -130,9 +130,8 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --parameters "commands=[
               \"set -eu\",
-              \"export PATH=/usr/local/bin:/usr/bin:$PATH\",
-              \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${ECR_REPO}\",
-              \"docker pull ${ECR_REPO}:${IMAGE_TAG}\",
+              \"/usr/local/bin/aws ecr get-login-password --region ${{ env.AWS_REGION }} | /usr/bin/docker login --username AWS --password-stdin ${ECR_REPO}\",
+              \"/usr/bin/docker pull ${ECR_REPO}:${IMAGE_TAG}\",
               \"sudo sed -i 's|${ECR_REPO}:.*|${ECR_REPO}:${IMAGE_TAG}|' /etc/systemd/system/erp-p2p-cloud.service\",
               \"sudo systemctl daemon-reload\",
               \"sudo systemctl restart erp-p2p-cloud\"
@@ -262,9 +261,8 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --parameters "commands=[
               \"set -eu\",
-              \"export PATH=/usr/local/bin:/usr/bin:$PATH\",
-              \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${ECR_REPO}\",
-              \"docker pull ${ECR_REPO}:${IMAGE_TAG}\",
+              \"/usr/local/bin/aws ecr get-login-password --region ${{ env.AWS_REGION }} | /usr/bin/docker login --username AWS --password-stdin ${ECR_REPO}\",
+              \"/usr/bin/docker pull ${ECR_REPO}:${IMAGE_TAG}\",
               \"sudo sed -i 's|${ECR_REPO}:.*|${ECR_REPO}:${IMAGE_TAG}|' /etc/systemd/system/erp-p2p-cloud.service\",
               \"sudo systemctl daemon-reload\",
               \"sudo systemctl restart erp-p2p-cloud\"
