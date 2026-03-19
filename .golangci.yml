@@ -1,0 +1,33 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - revive
+    - gocritic
+    - misspell
+    - noctx
+    - bodyclose
+
+linters-settings:
+  revive:
+    rules:
+      - name: exported
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+
+issues:
+  exclude-rules:
+    - path: "_test.go"
+      linters:
+        - errcheck

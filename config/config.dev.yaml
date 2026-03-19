@@ -1,0 +1,32 @@
+app:
+  env: dev
+  version: "0.0.0"
+
+server:
+  health_port: 8080
+  metrics_port: 9090
+
+p2p:
+  listen_tcp: /ip4/0.0.0.0/tcp/4001
+  listen_quic: /ip4/0.0.0.0/udp/4001/quic-v1
+  dht_namespace: /bytser/erp
+  relay_max_reservations: 128
+  relay_max_circuits: 64
+  relay_ttl: 1h
+  relay_max_circuit_dur: 5m
+  relay_max_circuit_bytes: 131072
+  autonat_enabled: true
+  autonat_throttle_peer: 30s
+  conn_mgr_low_water: 900
+  conn_mgr_high_water: 1000
+  conn_mgr_grace: 30s
+  identity_secret_name: ""
+  bootstrap_peers: []
+
+logging:
+  level: debug
+  format: pretty
+
+aws:
+  region: us-east-1
+  secrets_endpoint: ""

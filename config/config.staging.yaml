@@ -1,0 +1,35 @@
+app:
+  env: staging
+  version: "0.0.0"
+
+server:
+  health_port: 8080
+  metrics_port: 9090
+
+p2p:
+  listen_tcp: /ip4/0.0.0.0/tcp/4001
+  listen_quic: /ip4/0.0.0.0/udp/4001/quic-v1
+  dht_namespace: /bytser/erp
+  relay_max_reservations: 128
+  relay_max_circuits: 64
+  relay_ttl: 1h
+  relay_max_circuit_dur: 5m
+  relay_max_circuit_bytes: 131072
+  autonat_enabled: true
+  autonat_throttle_peer: 30s
+  conn_mgr_low_water: 900
+  conn_mgr_high_water: 1000
+  conn_mgr_grace: 30s
+  identity_secret_name: bytsers/p2p-relay/identity
+  bootstrap_peers:
+    - /dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN
+    - /dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa
+    - /dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb
+    - /dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt
+
+logging:
+  level: debug
+  format: json
+
+aws:
+  region: us-east-1

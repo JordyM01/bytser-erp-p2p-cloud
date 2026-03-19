@@ -1,0 +1,47 @@
+# Go binaries
+server
+erp-p2p-cloud
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go test/build artifacts
+coverage.out
+*.test
+*.prof
+
+# Go workspace
+go.work
+go.work.sum
+
+# Environment and secrets
+*.env
+.env.*
+*.pem
+*.key
+
+# Docker
+docker-compose.override.yml
+
+# Terraform
+deployments/terraform/.terraform/
+deployments/terraform/*.tfstate
+deployments/terraform/*.tfstate.*
+deployments/terraform/.terraform.lock.hcl
+deployments/terraform/*.tfvars
+!deployments/terraform/*.tfvars.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local development identity
+.local/
+
+# OS
+.DS_Store
+Thumbs.db

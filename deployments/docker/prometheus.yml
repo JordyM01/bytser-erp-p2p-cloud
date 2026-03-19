@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: erp-p2p-cloud
+    static_configs:
+      - targets: ["p2p-server:9090"]
