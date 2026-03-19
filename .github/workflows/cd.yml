@@ -99,6 +99,32 @@ jobs:
             sleep 10
           done
 
+          # Wait for cloud-init to finish (installs Docker + awscli)
+          echo "Waiting for cloud-init to complete..."
+          INIT_CMD=$(aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --instance-ids "$INSTANCE_ID" \
+            --parameters 'commands=["cloud-init status --wait"]' \
+            --query "Command.CommandId" \
+            --output text)
+
+          for i in {1..60}; do
+            INIT_STATUS=$(aws ssm get-command-invocation \
+              --command-id "$INIT_CMD" \
+              --instance-id "$INSTANCE_ID" \
+              --query "Status" \
+              --output text 2>/dev/null || echo "InProgress")
+            if [ "$INIT_STATUS" = "Success" ]; then
+              echo "cloud-init completed"
+              break
+            elif [ "$INIT_STATUS" = "Failed" ]; then
+              echo "cloud-init failed"
+              exit 1
+            fi
+            echo "Waiting for cloud-init... ($i/60)"
+            sleep 10
+          done
+
           COMMAND_ID=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
             --instance-ids "$INSTANCE_ID" \
