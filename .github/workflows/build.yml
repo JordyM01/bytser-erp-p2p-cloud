@@ -1,11 +1,13 @@
-name: Build & Deploy
+name: CI
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
-  id-token: write   # para OIDC con AWS
+  id-token: write
   contents: read
 
 env:
@@ -29,6 +31,7 @@ jobs:
   build-push:
     needs: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     outputs:
       image_tag: ${{ steps.meta.outputs.tag }}
     steps:
@@ -43,7 +46,7 @@ jobs:
       - name: Configurar credenciales AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login a ECR
@@ -69,37 +72,3 @@ jobs:
           build-args: VERSION=${{ steps.meta.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  deploy-staging:
-    needs: build-push
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configurar credenciales AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Agregar SSH key
-        run: |
-          echo "${{ secrets.STAGING_SSH_KEY }}" > /tmp/key.pem
-          chmod 600 /tmp/key.pem
-
-      - name: Deploy a staging
-        env:
-          SSH_KEY_PATH: /tmp/key.pem
-        run: ./scripts/deploy.sh staging ${{ needs.build-push.outputs.image_tag }}
-
-      - name: Notificar Slack
-        if: always()
-        uses: slackapi/slack-github-action@v1
-        with:
-          payload: |
-            {
-              "text": "Deploy P2P relay staging: ${{ job.status }} — v${{ needs.build-push.outputs.image_tag }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -31,6 +31,9 @@ deployments/terraform/*.tfstate.*
 deployments/terraform/.terraform.lock.hcl
 deployments/terraform/*.tfvars
 !deployments/terraform/*.tfvars.example
+!deployments/terraform/environments/*.tfvars
+deployments/terraform/*.pem
+deployments/terraform/tfplan
 
 # IDE
 .idea/

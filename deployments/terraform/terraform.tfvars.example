@@ -1,0 +1,2 @@
+allowed_ssh_cidr = "YOUR_IP/32"
+environment      = "staging"

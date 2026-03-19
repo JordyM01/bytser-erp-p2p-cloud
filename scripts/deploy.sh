@@ -1,18 +1,26 @@
 #!/bin/bash
 # Uso: ./scripts/deploy.sh [staging|prod] [image_tag]
+# Deploy manual via SSH — alternativa al CD workflow de GitHub Actions.
 set -euo pipefail
 
 ENV=${1:?Especificar entorno: staging|prod}
 IMAGE_TAG=${2:?Especificar image tag}
-EC2_IP=$(terraform -chdir=deployments/terraform output -raw elastic_ip)
-ECR_REPO=$(aws ecr describe-repositories \
-    --repository-names erp-p2p-cloud \
-    --query 'repositories[0].repositoryUri' \
-    --output text)
+
+# Map prod → production for terraform backend
+TF_ENV=$ENV
+if [ "$ENV" = "prod" ]; then
+  TF_ENV="production"
+fi
+
+cd deployments/terraform
+terraform init -backend-config="backend-${TF_ENV}.hcl" -reconfigure
+EC2_IP=$(terraform output -raw elastic_ip)
+ECR_REPO=$(terraform output -raw ecr_repository_url)
+cd ../..
 
 echo "Desplegando $IMAGE_TAG a $ENV ($EC2_IP)..."
 
-SSH_KEY="${SSH_KEY_PATH:-/tmp/key.pem}"
+SSH_KEY="${SSH_KEY_PATH:-deployments/terraform/bytsers-p2p-relay.pem}"
 
 # SSH al servidor y actualizar el contenedor
 ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@"$EC2_IP" << EOF
