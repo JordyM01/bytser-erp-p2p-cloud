@@ -4,12 +4,18 @@ set -euo pipefail
 # Wait for cloud-init network
 until ping -c1 archive.ubuntu.com &>/dev/null; do sleep 2; done
 
-# Install Docker and AWS CLI
+# Install Docker
 apt-get update -y
-apt-get install -y docker.io awscli
+apt-get install -y docker.io unzip curl
 systemctl enable docker
 systemctl start docker
 usermod -aG docker ubuntu
+
+# Install AWS CLI v2 (ARM64)
+curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install
+rm -rf /tmp/awscliv2.zip /tmp/aws
 
 # ECR login
 aws ecr get-login-password --region ${aws_region} | \
