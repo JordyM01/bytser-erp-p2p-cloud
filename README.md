@@ -120,15 +120,44 @@ Startup sequence: config > logger > identity > host+DHT > collector > health ser
 
 See [architecture.md](architecture.md) for the full technical design and ADRs.
 
+## Deployment
+
+### Prerequisites (one-time)
+
+Before the first deploy, generate the node's P2P identity:
+
+```bash
+go run scripts/gen_identity/main.go -secret-name bytsers/p2p-relay/identity -region us-east-1
+```
+
+This creates an Ed25519 keypair in AWS Secrets Manager. The PeerID is derived from this key and is the node's permanent address on the P2P network. **Do not regenerate** — changing the identity disconnects all peers.
+
+### Deploy via GitHub Actions
+
+1. Push to `main` — triggers `Build & Push` (test + build ARM64 + push to ECR)
+2. Go to Actions > **CD** > Run workflow > select environment + image tag
+3. The workflow runs `terraform apply` + SSM deploy + health check
+
+### Deploy manually (fallback)
+
+```bash
+cd deployments/terraform
+terraform init -backend-config=backend-production.hcl
+terraform apply -var-file=environments/production.tfvars
+./scripts/deploy.sh prod <image_tag>
+```
+
 ## CI/CD
 
 | Trigger | Workflow | Pipeline |
 |---|---|---|
-| PR to main | `ci.yml` | lint + test (80% gate) + govulncheck |
-| Push to main | `build.yml` | test > build ARM64 > push ECR > deploy staging > Slack |
-| Manual dispatch | `deploy.yml` | confirm "PRODUCCION" > environment approval > deploy prod > Slack |
+| PR to main | `ci.yml` | lint + test + govulncheck |
+| Push to main | `build.yml` | test > cross-compile ARM64 > push ECR |
+| Manual dispatch | `cd.yml` | terraform apply > SSM deploy > health check |
 
-AWS authentication uses **OIDC** (no static credentials). See [roadmap.md](roadmap.md) for the full development plan.
+AWS authentication uses **OIDC** via the shared `github-actions-deploy-role` (no static credentials). Requires GitHub secret `AWS_DEPLOY_ROLE_ARN`.
+
+See [roadmap.md](roadmap.md) for the full development plan.
 
 ## Makefile Targets
 
