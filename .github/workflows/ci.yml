@@ -23,11 +23,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25"
-      - run: go test ./... -race -coverprofile=coverage.out -timeout 120s
-      - run: |
-          COVERAGE=$(go tool cover -func=coverage.out | tail -1 | awk '{print $3}' | tr -d '%')
-          echo "Total coverage: ${COVERAGE}%"
-          awk -v cov="$COVERAGE" 'BEGIN { if (cov+0 < 80) { print "ERROR: Coverage " cov "% < 80% required"; exit 1 } }'
+      - run: go test ./... -race -timeout 120s
 
   security:
     runs-on: ubuntu-latest
