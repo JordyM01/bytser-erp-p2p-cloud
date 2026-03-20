@@ -91,11 +91,11 @@ El servidor P2P tiene un PeerID estable (derivado de un keypair Ed25519 almacena
 ### Multiaddrs del servidor
 
 ```
-/dns4/relay.bytsers.com/tcp/4001/p2p/12D3KooW[PEER_ID]
-/dns4/relay.bytsers.com/udp/4001/quic-v1/p2p/12D3KooW[PEER_ID]
+/dns4/relay.bytsers.com/tcp/4001/p2p/12D3KooWMqxKVgZ9cg7RQpfV3AvxjiurAmLqdA5CsGh536kjp66x
+/dns4/relay.bytsers.com/udp/4001/quic-v1/p2p/12D3KooWMqxKVgZ9cg7RQpfV3AvxjiurAmLqdA5CsGh536kjp66x
 ```
 
-> El PeerID real se proporcionara cuando el servidor este desplegado en produccion. Para desarrollo local, el servidor genera un PeerID temporal en `.local/identity.key`.
+> Para desarrollo local, el servidor genera un PeerID temporal en `.local/identity.key`.
 
 ### Config en ERP-CORE
 
@@ -103,8 +103,8 @@ El servidor P2P tiene un PeerID estable (derivado de un keypair Ed25519 almacena
 # erp-core config
 [p2p]
 bootstrap_peers = [
-    "/dns4/relay.bytsers.com/tcp/4001/p2p/12D3KooWXXXXXX",
-    "/dns4/relay.bytsers.com/udp/4001/quic-v1/p2p/12D3KooWXXXXXX",
+    "/dns4/relay.bytsers.com/tcp/4001/p2p/12D3KooWMqxKVgZ9cg7RQpfV3AvxjiurAmLqdA5CsGh536kjp66x",
+    "/dns4/relay.bytsers.com/udp/4001/quic-v1/p2p/12D3KooWMqxKVgZ9cg7RQpfV3AvxjiurAmLqdA5CsGh536kjp66x",
 ]
 ```
 
@@ -160,7 +160,7 @@ let local_key = identity::Keypair::generate_ed25519();
 let local_peer_id = PeerId::from(local_key.public());
 
 // PeerID del servidor relay (proporcionado por equipo infra)
-let relay_peer_id = PeerId::from_str("12D3KooWXXXXXX").unwrap();
+let relay_peer_id = PeerId::from_str("12D3KooWMqxKVgZ9cg7RQpfV3AvxjiurAmLqdA5CsGh536kjp66x").unwrap();
 let relay_addr_tcp: Multiaddr =
     "/dns4/relay.bytsers.com/tcp/4001".parse().unwrap();
 let relay_addr_quic: Multiaddr =
